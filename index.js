@@ -11,11 +11,39 @@ function isCorrectCustomName(prop, options) {
     return options && typeof options[prop] === 'string' && options[prop];
 }
 
-function addListener(options) {
-    (options.events[options.eventName] || (options.events[options.eventName] = [])).push({
-        subscriberId: options.subscriberId,
-        callback: options.callback
+function addListener(params) {
+    (params.events[params.eventName] || (params.events[params.eventName] = [])).push({
+        subscriberId: params.subscriberId,
+        callback: params.callback
     });
+}
+
+function runCallbacks(params) {
+    var eventsAmount = params.events && params.events[params.eventName] && params.events[params.eventName].length;
+
+    if (eventsAmount) {
+        for (var listenerIndex = 0; listenerIndex < eventsAmount; listenerIndex++) {
+            params.events[params.eventName][listenerIndex].callback(params.options);
+        }
+    }
+}
+
+function removeListeners(params) {
+    for (var listenerIndex = 0; listenerIndex < params.events[params.event].length; listenerIndex++) {
+        if (params.events[params.event][listenerIndex].subscriberId === params.subscriberId) {
+            params.events[params.event].splice(listenerIndex, 1);
+        }
+    }
+}
+
+function removeCallbacks(params) {
+    var indexOfSubscriber = params.events[params.event].findIndex(function (el) {
+        return el.subscriberId === params.subscriberId && el.callback === params.callback;
+    });
+
+    if (~indexOfSubscriber) {
+        params.events[params.event].splice(indexOfSubscriber, 1);
+    }
 }
 
 exports.default = {
@@ -44,26 +72,16 @@ exports.default = {
 
             if (Array.isArray(cb)) {
                 for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
-                    addListener({
-                        events: events, eventName: eventName, subscriberId: ID, callback: cb[callbackIndex]
-                    });
+                    addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb[callbackIndex] });
                 }
             } else {
-                addListener({
-                    events: events, eventName: eventName, subscriberId: ID, callback: cb
-                });
+                addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb });
             }
         };
 
         /* fire event */
         Vue.prototype[emitEventProp] = function (eventName, options) {
-            var eventsAmount = events[eventName].length;
-
-            if (eventsAmount) {
-                for (var listenerIndex = 0; listenerIndex < eventsAmount; listenerIndex++) {
-                    events[eventName][listenerIndex].callback(options);
-                }
-            }
+            runCallbacks({ events: events, eventName: eventName, options: options });
         };
 
         /* remove event from events object */
@@ -82,64 +100,36 @@ exports.default = {
             var ID = this._uniqID;
 
             if (!isEmpty(events)) {
-                if (event && typeof event === 'string' && !cb) {
-                    for (var listenerIndex = 0; listenerIndex < events[event].length; listenerIndex++) {
-                        if (events[event][listenerIndex].subscriberId === ID) {
-                            events[event].splice(listenerIndex, 1);
-                        }
-                    }
+                if (event && event in events && typeof event === 'string' && !cb) {
+                    removeListeners({ events: events, event: event, subscriberId: ID });
 
                     return;
                 }
 
                 if (event && Array.isArray(event) && !cb) {
                     for (var eventIndex = 0, len = event.length; eventIndex < len; eventIndex++) {
-                        for (var _listenerIndex = 0; _listenerIndex < events[event[eventIndex]].length; _listenerIndex++) {
-                            if (events[event[eventIndex]][_listenerIndex].subscriberId === ID) {
-                                events[event[eventIndex]].splice(_listenerIndex, 1);
-                            }
-                        }
+                        removeListeners({ events: events, event: event[eventIndex], subscriberId: ID });
                     }
 
                     return;
                 }
 
                 if (event && cb && Array.isArray(cb) && event in events && events[event].length) {
-                    var _loop = function _loop(callbackIndex, _len) {
-                        var indexOfSubscriber = events[event].findIndex(function (el) {
-                            return el.subscriberId === ID && el.callback === cb[callbackIndex];
-                        });
-
-                        if (~indexOfSubscriber) {
-                            events[event].splice(indexOfSubscriber, 1);
-                        }
-                    };
-
                     for (var callbackIndex = 0, _len = cb.length; callbackIndex < _len; callbackIndex++) {
-                        _loop(callbackIndex, _len);
+                        removeCallbacks({ events: events, event: event, subscriberId: ID, callback: cb[callbackIndex] });
                     }
 
                     return;
                 }
 
                 if (event && cb && event in events && events[event].length) {
-                    var _indexOfSubscriber = events[event].findIndex(function (el) {
-                        return el.subscriberId === ID && el.callback === cb;
-                    });
-
-                    if (~_indexOfSubscriber) {
-                        events[event].splice(_indexOfSubscriber, 1);
-                    }
+                    removeCallbacks({ events: events, event: event, subscriberId: ID, callback: cb });
 
                     return;
                 }
 
                 for (var _event in events) {
-                    for (var _listenerIndex2 = 0; _listenerIndex2 < events[_event].length; _listenerIndex2++) {
-                        if (events[_event][_listenerIndex2].subscriberId === ID) {
-                            events[_event].splice(_listenerIndex2, 1);
-                        }
-                    }
+                    removeListeners({ events: events, event: _event, subscriberId: ID });
                 }
             }
         };
