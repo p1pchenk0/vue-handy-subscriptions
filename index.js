@@ -11,6 +11,13 @@ function isCorrectCustomName(prop, options) {
     return options && typeof options[prop] === 'string' && options[prop];
 }
 
+function addListener(options) {
+    (options.events[options.eventName] || (options.events[options.eventName] = [])).push({
+        subscriberId: options.subscriberId,
+        callback: options.callback
+    });
+}
+
 exports.default = {
     install: function install(Vue, options) {
         var idSubsProp = isCorrectCustomName('idSubs', options) || '$idSubs';
@@ -37,15 +44,13 @@ exports.default = {
 
             if (Array.isArray(cb)) {
                 for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
-                    (events[eventName] || (events[eventName] = [])).push({
-                        subscriberId: ID,
-                        callback: cb[callbackIndex]
+                    addListener({
+                        events: events, eventName: eventName, subscriberId: ID, callback: cb[callbackIndex]
                     });
                 }
             } else {
-                (events[eventName] || (events[eventName] = [])).push({
-                    subscriberId: ID,
-                    callback: cb
+                addListener({
+                    events: events, eventName: eventName, subscriberId: ID, callback: cb
                 });
             }
         };
