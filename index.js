@@ -128,6 +128,10 @@ exports.default = {
                     return;
                 }
 
+                if (event && cb && typeof cb !== 'function') {
+                    return;
+                }
+
                 for (var _event in events) {
                     removeListeners({ events: events, event: _event, subscriberId: ID });
                 }
