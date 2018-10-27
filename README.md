@@ -85,6 +85,17 @@ Remove array of listeners (example):
         }
     }
 ```
+Unsubscribe from specific event or events (all component's listeners):
+```javascript
+    methods: {
+        notListenToOne() {
+            this.$fallSilent('some-event')
+        },
+        notListenToMany() {
+            this.$fallSilent(['some-event', 'another-event'])
+        }
+    }
+```
 You can forbid automatic unsubscribing from all events component is currently listening to:
 ```javascript
     data() {

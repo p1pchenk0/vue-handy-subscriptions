@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -67,8 +67,30 @@ exports.default = {
             var ID = this._uniqID;
 
             if (!isEmpty(events)) {
+                if (event && typeof event === 'string' && !cb) {
+                    for (var listenerIndex = 0; listenerIndex < events[event].length; listenerIndex++) {
+                        if (events[event][listenerIndex].subscriberId === ID) {
+                            events[event].splice(listenerIndex, 1);
+                        }
+                    }
+
+                    return;
+                }
+
+                if (event && Array.isArray(event) && !cb) {
+                    for (var eventIndex = 0, len = event.length; eventIndex < len; eventIndex++) {
+                        for (var _listenerIndex = 0; _listenerIndex < events[event[eventIndex]].length; _listenerIndex++) {
+                            if (events[event[eventIndex]][_listenerIndex].subscriberId === ID) {
+                                events[event[eventIndex]].splice(_listenerIndex, 1);
+                            }
+                        }
+                    }
+
+                    return;
+                }
+
                 if (event && cb && Array.isArray(cb) && event in events && events[event].length) {
-                    var _loop = function _loop(callbackIndex, len) {
+                    var _loop = function _loop(callbackIndex, _len) {
                         var indexOfSubscriber = events[event].findIndex(function (el) {
                             return el.subscriberId === ID && el.callback === cb[callbackIndex];
                         });
@@ -78,8 +100,8 @@ exports.default = {
                         }
                     };
 
-                    for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
-                        _loop(callbackIndex, len);
+                    for (var callbackIndex = 0, _len = cb.length; callbackIndex < _len; callbackIndex++) {
+                        _loop(callbackIndex, _len);
                     }
 
                     return;
@@ -98,9 +120,9 @@ exports.default = {
                 }
 
                 for (var _event in events) {
-                    for (var listenerIndex = 0; listenerIndex < events[_event].length; listenerIndex++) {
-                        if (events[_event][listenerIndex].subscriberId === ID) {
-                            events[_event].splice(listenerIndex, 1);
+                    for (var _listenerIndex2 = 0; _listenerIndex2 < events[_event].length; _listenerIndex2++) {
+                        if (events[_event][_listenerIndex2].subscriberId === ID) {
+                            events[_event].splice(_listenerIndex2, 1);
                         }
                     }
                 }
