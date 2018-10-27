@@ -1,5 +1,5 @@
 # vue-handy-subscriptions
-This plugin (1.4 KBs minified) is for easier Vue event subsciptions management.
+This plugin is for easier Vue event bus subsciptions management.
 By using standart event bus approach with `new Vue()` we create a `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
 
 ## Installation
@@ -10,7 +10,7 @@ Vue.use(HandySubs)
 ```
 
 ## Events management
-This package is responsible for automatic events unsubscription when component is being destroyed. No more need to write something like:
+This package is responsible for automatic event bus unsubscription when component is being destroyed. No more need to write something like:
 ```javascript
     beforeDestroy() {
         this.$eventBus.off('event-one', this.methodOne)
