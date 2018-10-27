@@ -62,15 +62,25 @@ exports.default = {
             }
         };
 
-        /* unsubscribe from all component's subscriptions */
-        Vue.prototype.$fallSilent = function () {
+        /* unsubscribe from subscriptions */
+        Vue.prototype.$fallSilent = function (event, cb) {
             var ID = this._uniqID;
 
             if (!isEmpty(events)) {
-                for (var event in events) {
-                    for (var listenerIndex = 0; listenerIndex < events[event].length; listenerIndex++) {
-                        if (events[event][listenerIndex].subscriberId === ID) {
-                            events[event].splice(listenerIndex, 1);
+                if (event && cb && event in events && events[event].length) {
+                    var indexOfSubscriber = events[event].findIndex(function (el) {
+                        return el.subscriberId === ID && el.callback === cb;
+                    });
+
+                    if (~indexOfSubscriber) {
+                        events[event].splice(indexOfSubscriber, 1);
+                    }
+                } else {
+                    for (var _event in events) {
+                        for (var listenerIndex = 0; listenerIndex < events[_event].length; listenerIndex++) {
+                            if (events[_event][listenerIndex].subscriberId === ID) {
+                                events[_event].splice(listenerIndex, 1);
+                            }
                         }
                     }
                 }

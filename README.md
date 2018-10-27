@@ -37,7 +37,7 @@ It is possible to fire multiple callbacks:
     created() {
         this.$listenTo('some-event', [
             this.eventCallbackOne,
-            this.eventCallBackTwo
+            this.eventCallbackTwo
         ])
     }
 ```
@@ -68,7 +68,22 @@ Unsubsribe from all events manually (example):
         }
     }
 ```
-
+Remove specific listener (example): 
+```javascript
+    methods: {
+        leaveMeWithoutSpecificCallback() {
+            this.$fallSilent('some-event', this.specificCallback)
+        }
+    }
+```
+Remove array of listeners (example):
+```javascript
+    methods: {
+        leaveMeWithoutSpecificCallbacks() {
+            this.$fallSilent('some-event', [this.callbackOne, this.callbackTwo])
+        }
+    }
+```
 You can forbid automatic unsubscribing from all events component is currently listening to:
 ```javascript
     data() {
