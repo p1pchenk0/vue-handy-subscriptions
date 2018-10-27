@@ -25,14 +25,19 @@ exports.default = {
         Vue.prototype.$listenTo = function (eventName, cb) {
             var ID = this._uniqID;
 
-            if (!events[eventName]) {
-                events[eventName] = [];
+            if (Array.isArray(cb)) {
+                for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
+                    (events[eventName] || (events[eventName] = [])).push({
+                        subscriberId: ID,
+                        callback: cb[callbackIndex]
+                    });
+                }
+            } else {
+                (events[eventName] || (events[eventName] = [])).push({
+                    subscriberId: ID,
+                    callback: cb
+                });
             }
-
-            events[eventName].push({
-                subscriberId: ID,
-                callback: cb
-            });
         };
 
         /* fire event */
