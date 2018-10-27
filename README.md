@@ -60,5 +60,13 @@ Unsubsribe from all events manually (example):
     }
 ```
 
+You can forbid automatic unsubscribing from all events component is currently listening to:
+```javascript
+    data() {
+        return {
+            shouldFallSilent: false
+        }
+    }
+```
 
 
