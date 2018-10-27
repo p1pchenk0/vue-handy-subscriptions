@@ -1,0 +1,25 @@
+{
+  "name": "vue-handy-subscriptions",
+  "version": "1.0.1",
+  "description": "Vue 2.x plugin for creating events object, which pays attention to subscribers IDs in order to allow listener to unsubscribe from all events at once",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/p1pchenk0/vue-handy-subscriptions.git"
+  },
+  "keywords": [
+    "vue"
+  ],
+  "author": "Artur Pipchenko <art.pipchenko@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/p1pchenk0/vue-handy-subscriptions/issues"
+  },
+  "homepage": "https://github.com/p1pchenk0/vue-handy-subscriptions#readme",
+  "dependencies": {
+    "vue-touch": "^2.0.0-beta.4"
+  }
+}
