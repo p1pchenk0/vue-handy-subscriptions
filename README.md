@@ -1,6 +1,6 @@
 # vue-handy-subscriptions
 This plugin is for easier Vue event bus subsciptions management.
-By using standart event bus approach with `new Vue()` we create a `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
+By using standart event bus approach with `new Vue()` we create a new `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
 
 ## Installation
 ```javascript
@@ -11,6 +11,8 @@ Vue.use(HandySubs)
 ```
 
 ## Events management
+Issue with using standart event bus is that you cannot just write `this.$eventBus.off()` inside component in order to unsubscribe only this component from all events it was subscribed to. Instead code above will remove all events from everywhere.
+
 This package is responsible for automatic event bus unsubscription when component is being destroyed. No more need to write something like:
 ```javascript
     beforeDestroy() {
@@ -56,7 +58,7 @@ Removing event from events object for all listeners (example):
 ```javascript
     methods: {
         dontWannaListenAnymore() {
-            this.$eraseEvent('some-event')
+            this.$eraseEvent('some-event') // now no component will listen to this event
         }
     }
 ```
@@ -65,11 +67,11 @@ Unsubsribe from all events manually (example):
 ```javascript
     methods: {
         leaveMeAlone() {
-            this.$fallSilent() // it is also done automatically
+            this.$fallSilent() // nice, but it is also done automatically inside "beforeDestroy" hook
         }
     }
 ```
-Remove specific listener (example): 
+Remove specific callback for specific event (example): 
 ```javascript
     methods: {
         leaveMeWithoutSpecificCallback() {
@@ -77,7 +79,7 @@ Remove specific listener (example):
         }
     }
 ```
-Remove array of listeners (example):
+Remove array of callbacks for specific event (example):
 ```javascript
     methods: {
         leaveMeWithoutSpecificCallbacks() {
@@ -85,7 +87,7 @@ Remove array of listeners (example):
         }
     }
 ```
-Unsubscribe from specific event or events (all component's listeners):
+Unsubscribe component from specific event or events (all component's callbacks for these events will be removed):
 ```javascript
     methods: {
         notListenToOne() {
@@ -93,14 +95,6 @@ Unsubscribe from specific event or events (all component's listeners):
         },
         notListenToMany() {
             this.$fallSilent(['some-event', 'another-event'])
-        }
-    }
-```
-You can forbid automatic unsubscribing from all events component is currently listening to:
-```javascript
-    data() {
-        return {
-            shouldFallSilent: false
         }
     }
 ```
@@ -125,7 +119,7 @@ If you use some plugins, which have some conflicting function names (or you just
     },
     methods: {
         doSmth() {
-            this.$fireEvent('attack!')
+            this.$fireEvent('some-event')
         },
         unsubscribe() {
             this.$noMore('some-event')

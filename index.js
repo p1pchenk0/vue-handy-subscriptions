@@ -57,10 +57,9 @@ exports.default = {
         Vue.mixin({
             beforeCreate: function beforeCreate() {
                 this._uniqID = Math.random().toString(36).substr(2, 9);
-                this.shouldFallSilent = true;
             },
             beforeDestroy: function beforeDestroy() {
-                if (this.shouldFallSilent) this.$fallSilent();
+                this.$fallSilent();
             }
         });
 
