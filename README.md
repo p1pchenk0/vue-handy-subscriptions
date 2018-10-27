@@ -1,5 +1,5 @@
 # vue-handy-subscriptions
-This plugin is for easier Vue event subsciptions management.
+This plugin (1.4 KBs minified) is for easier Vue event subsciptions management.
 By using standart event bus approach with `new Vue()` we create a `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
 
 ## Installation
