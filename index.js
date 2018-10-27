@@ -67,20 +67,40 @@ exports.default = {
             var ID = this._uniqID;
 
             if (!isEmpty(events)) {
+                if (event && cb && Array.isArray(cb) && event in events && events[event].length) {
+                    var _loop = function _loop(callbackIndex, len) {
+                        var indexOfSubscriber = events[event].findIndex(function (el) {
+                            return el.subscriberId === ID && el.callback === cb[callbackIndex];
+                        });
+
+                        if (~indexOfSubscriber) {
+                            events[event].splice(indexOfSubscriber, 1);
+                        }
+                    };
+
+                    for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
+                        _loop(callbackIndex, len);
+                    }
+
+                    return;
+                }
+
                 if (event && cb && event in events && events[event].length) {
-                    var indexOfSubscriber = events[event].findIndex(function (el) {
+                    var _indexOfSubscriber = events[event].findIndex(function (el) {
                         return el.subscriberId === ID && el.callback === cb;
                     });
 
-                    if (~indexOfSubscriber) {
-                        events[event].splice(indexOfSubscriber, 1);
+                    if (~_indexOfSubscriber) {
+                        events[event].splice(_indexOfSubscriber, 1);
                     }
-                } else {
-                    for (var _event in events) {
-                        for (var listenerIndex = 0; listenerIndex < events[_event].length; listenerIndex++) {
-                            if (events[_event][listenerIndex].subscriberId === ID) {
-                                events[_event].splice(listenerIndex, 1);
-                            }
+
+                    return;
+                }
+
+                for (var _event in events) {
+                    for (var listenerIndex = 0; listenerIndex < events[_event].length; listenerIndex++) {
+                        if (events[_event][listenerIndex].subscriberId === ID) {
+                            events[_event].splice(listenerIndex, 1);
                         }
                     }
                 }
