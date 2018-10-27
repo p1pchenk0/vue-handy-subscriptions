@@ -7,8 +7,18 @@ function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
 
+function isCorrectCustomName(prop, options) {
+    return options && typeof options[prop] === 'string' && options[prop];
+}
+
 exports.default = {
     install: function install(Vue, options) {
+        var idSubsProp = isCorrectCustomName('idSubs', options) || '$idSubs';
+        var listenToProp = isCorrectCustomName('listenTo', options) || '$listenTo';
+        var emitEventProp = isCorrectCustomName('emitEvent', options) || '$emitEvent';
+        var eraseEventProp = isCorrectCustomName('eraseEvent', options) || '$eraseEvent';
+        var fallSilentProp = isCorrectCustomName('fallSilent', options) || '$fallSilent';
+
         Vue.mixin({
             beforeCreate: function beforeCreate() {
                 this._uniqID = Math.random().toString(36).substr(2, 9);
@@ -19,10 +29,10 @@ exports.default = {
             }
         });
 
-        Vue.prototype.$idSubs = { _events: {} };
-        var events = Vue.prototype.$idSubs._events;
+        Vue.prototype[idSubsProp] = { _events: {} };
+        var events = Vue.prototype[idSubsProp]._events;
         /* subscribe to event */
-        Vue.prototype.$listenTo = function (eventName, cb) {
+        Vue.prototype[listenToProp] = function (eventName, cb) {
             var ID = this._uniqID;
 
             if (Array.isArray(cb)) {
@@ -41,7 +51,7 @@ exports.default = {
         };
 
         /* fire event */
-        Vue.prototype.$emitEvent = function (eventName, options) {
+        Vue.prototype[emitEventProp] = function (eventName, options) {
             var eventsAmount = events[eventName].length;
 
             if (eventsAmount) {
@@ -52,7 +62,7 @@ exports.default = {
         };
 
         /* remove event from events object */
-        Vue.prototype.$eraseEvent = function (eventName) {
+        Vue.prototype[eraseEventProp] = function (eventName) {
             if (!isEmpty(events)) {
                 for (var event in events) {
                     if (event === eventName) {
@@ -63,7 +73,7 @@ exports.default = {
         };
 
         /* unsubscribe from subscriptions */
-        Vue.prototype.$fallSilent = function (event, cb) {
+        Vue.prototype[fallSilentProp] = function (event, cb) {
             var ID = this._uniqID;
 
             if (!isEmpty(events)) {

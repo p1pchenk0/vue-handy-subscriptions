@@ -106,3 +106,29 @@ You can forbid automatic unsubscribing from all events component is currently li
 ```
 
 
+### Customization
+If you use some plugins, which have some conflicting function names (or you just don't like default ones), you can rename all of them according to your preferences:
+```javascript
+    import Vue from 'vue'
+    import HandySubs from 'vue-handy-subscriptions'
+
+    Vue.use(HandySubs, {
+        listenTo: '$hear',
+        emitEvent: '$fireEvent',
+        eraseEvent: '$deleteEvent',
+        fallSilent: '$noMore'
+    })
+
+    // later in component...
+    created() {
+        this.$hear('some-event', this.callbackMethod)
+    },
+    methods: {
+        doSmth() {
+            this.$fireEvent('attack!')
+        },
+        unsubscribe() {
+            this.$noMore('some-event')
+        }
+    }
+```
