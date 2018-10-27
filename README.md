@@ -4,6 +4,7 @@ By using standart event bus approach with `new Vue()` we create a `Vue` object w
 
 ## Installation
 ```javascript
+import Vue from 'vue'
 import HandySubs from 'vue-handy-subscriptions'
 
 Vue.use(HandySubs)
