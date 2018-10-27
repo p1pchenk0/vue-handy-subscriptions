@@ -32,6 +32,15 @@ Listening to event (example):
         this.$listenTo('some-event', this.eventCallback)
     }
 ```
+It is possible to fire multiple callbacks:
+```javascript
+    created() {
+        this.$listenTo('some-event', [
+            this.eventCallbackOne,
+            this.eventCallBackTwo
+        ])
+    }
+```
 
 Emitting event (example):
 ```javascript
