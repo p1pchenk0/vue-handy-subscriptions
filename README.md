@@ -1,4 +1,6 @@
 # vue-handy-subscriptions
+[![npm](https://img.shields.io/npm/v/vue-handy-subscriptions.svg)](vue-handy-subscriptions) ![npm](https://img.shields.io/npm/dt/vue-handy-subscriptions.svg)
+
 This plugin is for easier Vue event bus subsciptions management.
 By using standart event bus approach with `new Vue()` we create a new `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
 
