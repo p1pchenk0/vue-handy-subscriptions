@@ -58,6 +58,7 @@ Removing event from events object for all listeners (example):
     methods: {
         dontWannaListenAnymore() {
             this.$eraseEvent('some-event') // now no component will listen to this event
+            this.$eraseEvent(['second-event', 'third-event'])
         }
     }
 ```

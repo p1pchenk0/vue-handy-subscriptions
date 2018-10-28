@@ -7,42 +7,75 @@ function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
 
+function isArray(obj) {
+    return Array.isArray(obj);
+}
+
 function isCorrectCustomName(prop, options) {
     return options && typeof options[prop] === 'string' && options[prop];
 }
 
-function addListener(params) {
-    (params.events[params.eventName] || (params.events[params.eventName] = [])).push({
-        subscriberId: params.subscriberId,
-        callback: params.callback
+function addListener(_ref) {
+    var events = _ref.events,
+        eventName = _ref.eventName,
+        subscriberId = _ref.subscriberId,
+        callback = _ref.callback;
+
+    (events[eventName] || (events[eventName] = [])).push({
+        subscriberId: subscriberId,
+        callback: callback
     });
 }
 
-function runCallbacks(params) {
-    var eventsAmount = params.events && params.events[params.eventName] && params.events[params.eventName].length;
+function runCallbacks(_ref2) {
+    var events = _ref2.events,
+        eventName = _ref2.eventName,
+        options = _ref2.options;
+
+    var eventsAmount = events && events[eventName] && events[eventName].length;
 
     if (eventsAmount) {
         for (var listenerIndex = 0; listenerIndex < eventsAmount; listenerIndex++) {
-            params.events[params.eventName][listenerIndex].callback(params.options);
+            events[eventName][listenerIndex].callback(options);
         }
     }
 }
 
-function removeListeners(params) {
-    for (var listenerIndex = 0; listenerIndex < params.events[params.event].length; listenerIndex++) {
-        if (params.events[params.event][listenerIndex].subscriberId === params.subscriberId) {
-            params.events[params.event].splice(listenerIndex, 1);
+function removeListeners(_ref3) {
+    var events = _ref3.events,
+        event = _ref3.event,
+        subscriberId = _ref3.subscriberId;
+
+    for (var listenerIndex = 0; listenerIndex < events[event].length; listenerIndex++) {
+        if (events[event][listenerIndex].subscriberId === subscriberId) {
+            events[event].splice(listenerIndex, 1);
         }
     }
 }
 
-function removeCallbacks(params) {
-    var indexOfSubscriber = params.events[params.event].findIndex(function (el) {
-        return el.subscriberId === params.subscriberId && el.callback === params.callback;
+function removeCallbacks(_ref4) {
+    var events = _ref4.events,
+        event = _ref4.event,
+        subscriberId = _ref4.subscriberId,
+        callback = _ref4.callback;
+
+    var indexOfSubscriber = events[event].findIndex(function (el) {
+        return el.subscriberId === subscriberId && el.callback === callback;
     });
 
     if (~indexOfSubscriber) {
-        params.events[params.event].splice(indexOfSubscriber, 1);
+        events[event].splice(indexOfSubscriber, 1);
+    }
+}
+
+function removeGlobalEvent(_ref5) {
+    var events = _ref5.events,
+        eventName = _ref5.eventName;
+
+    for (var event in events) {
+        if (event === eventName) {
+            delete events[eventName];
+        }
     }
 }
 
@@ -70,7 +103,7 @@ exports.default = {
         Vue.prototype[listenToProp] = function (eventName, cb) {
             var ID = this._uniqID;
 
-            if (Array.isArray(eventName) && Array.isArray(cb)) {
+            if (isArray(eventName) && isArray(cb)) {
                 for (var eventNameIndex = 0, len = eventName.length; eventNameIndex < len; eventNameIndex++) {
                     for (var callbackIndex = 0, _len = cb.length; callbackIndex < _len; callbackIndex++) {
                         addListener({ events: events, eventName: eventName[eventNameIndex], subscriberId: ID, callback: cb[callbackIndex] });
@@ -80,7 +113,7 @@ exports.default = {
                 return;
             }
 
-            if (Array.isArray(eventName)) {
+            if (isArray(eventName)) {
                 for (var _eventNameIndex = 0, _len2 = eventName.length; _eventNameIndex < _len2; _eventNameIndex++) {
                     addListener({ events: events, eventName: eventName[_eventNameIndex], subscriberId: ID, callback: cb });
                 }
@@ -88,7 +121,7 @@ exports.default = {
                 return;
             }
 
-            if (Array.isArray(cb)) {
+            if (isArray(cb)) {
                 for (var _callbackIndex = 0, _len3 = cb.length; _callbackIndex < _len3; _callbackIndex++) {
                     addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb[_callbackIndex] });
                 }
@@ -109,10 +142,12 @@ exports.default = {
         /* remove event from events object */
         Vue.prototype[eraseEventProp] = function (eventName) {
             if (!isEmpty(events)) {
-                for (var event in events) {
-                    if (event === eventName) {
-                        delete events[eventName];
+                if (isArray(eventName)) {
+                    for (var eventIndex = 0, len = eventName.length; eventIndex < len; eventIndex++) {
+                        removeGlobalEvent({ events: events, eventName: eventName[eventIndex] });
                     }
+                } else {
+                    removeGlobalEvent({ events: events, eventName: eventName });
                 }
             }
         };
@@ -128,7 +163,7 @@ exports.default = {
                     return;
                 }
 
-                if (event && Array.isArray(event) && !cb) {
+                if (event && isArray(event) && !cb) {
                     for (var eventIndex = 0, len = event.length; eventIndex < len; eventIndex++) {
                         removeListeners({ events: events, event: event[eventIndex], subscriberId: ID });
                     }
@@ -136,7 +171,7 @@ exports.default = {
                     return;
                 }
 
-                if (event && cb && Array.isArray(cb) && event in events && events[event].length) {
+                if (event && cb && isArray(cb) && event in events && events[event].length) {
                     for (var callbackIndex = 0, _len4 = cb.length; callbackIndex < _len4; callbackIndex++) {
                         removeCallbacks({ events: events, event: event, subscriberId: ID, callback: cb[callbackIndex] });
                     }
