@@ -101,7 +101,11 @@ Unsubscribe component from specific event or events (all component's callbacks f
 
 
 ### Customization
-If you use some plugins, which have some conflicting function names (or you just don't like default ones), you can rename all of them according to your preferences:
+If you use some plugins, which have some conflicting function names (or you just don't like default ones), you can rename all of them according to your preferences.
+NOTE: use this feature at your own risk as it will warn you only for Vue basic properties:
+```
+    "$options", "$parent", "$root", "$children", "$refs", "$vnode", "$slots", "$scopedSlots", "$createElement", "$attrs", "$listeners", "$el"
+```
 ```javascript
     import Vue from 'vue'
     import HandySubs from 'vue-handy-subscriptions'

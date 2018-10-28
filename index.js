@@ -1,8 +1,10 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+var vueReservedProps = ["$options", "$parent", "$root", "$children", "$refs", "$vnode", "$slots", "$scopedSlots", "$createElement", "$attrs", "$listeners", "$el"];
+
 function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
@@ -12,6 +14,12 @@ function isArray(obj) {
 }
 
 function isCorrectCustomName(prop, options) {
+    if (vueReservedProps.includes(options[prop])) {
+        console.warn('[vue-handy-subscriptions]: ' + options[prop] + ' is used by Vue. Use another name');
+
+        return false;
+    }
+
     return options && typeof options[prop] === 'string' && options[prop];
 }
 
