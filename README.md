@@ -2,7 +2,13 @@
 [![npm](https://img.shields.io/npm/v/vue-handy-subscriptions.svg)](vue-handy-subscriptions) ![npm](https://img.shields.io/npm/dt/vue-handy-subscriptions.svg)
 
 This plugin is for easier Vue event bus subsciptions management.
-By using standart event bus approach with `new Vue()` we create a new `Vue` object with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
+By using standart event bus approach:
+```javascript
+    Vue.prototype.$eventBus = new Vue()
+    // or
+    export const EventBus = new Vue()
+```
+we create a new `Vue` instance with lots of unused methods and properties. `vue-handy-subscriptions` creates simple object containing events-related functionality. 
 
 ## Installation
 ```javascript
@@ -28,7 +34,7 @@ This package is responsible for automatic event bus unsubscription when componen
 Instead of above you should write:
 ```javascript
 ```
-Yes. Correct. Nothing. Plugin will handle all of this by itself.
+Yes. Correct. Nothing. Plugin will handle all of this by itself, unsubscribing current component inside of its `beforeDestroy` hook.
 
 ### Methods
 Listening to event or events:
