@@ -29,19 +29,18 @@ Instead of above you should write:
 Yes. Correct. Nothing. Plugin will handle all of this by itself.
 
 ### Methods
-Listening to event (example):
+Listening to event or events:
 ```javascript
     created() {
         this.$listenTo('some-event', this.eventCallback)
+        this.$listenTo(['second-event', 'third-event'], this.commonCallback)
     }
 ```
-It is possible to fire multiple callbacks:
+It is possible to fire multiple callbacks (even for multiple events):
 ```javascript
     created() {
-        this.$listenTo('some-event', [
-            this.eventCallbackOne,
-            this.eventCallbackTwo
-        ])
+        this.$listenTo('some-event', [this.eventCallbackOne, this.eventCallbackTwo])
+        this.$listenTo(['second-event', 'third-event'], [this.eventCallbackOne, this.eventCallbackTwo])
     }
 ```
 

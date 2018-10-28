@@ -57,9 +57,10 @@ exports.default = {
         Vue.mixin({
             beforeCreate: function beforeCreate() {
                 this._uniqID = Math.random().toString(36).substr(2, 9);
+                this.shouldFallSilent = true;
             },
             beforeDestroy: function beforeDestroy() {
-                this.$fallSilent();
+                if (this.shouldFallSilent) this.$fallSilent();
             }
         });
 
@@ -69,12 +70,34 @@ exports.default = {
         Vue.prototype[listenToProp] = function (eventName, cb) {
             var ID = this._uniqID;
 
-            if (Array.isArray(cb)) {
-                for (var callbackIndex = 0, len = cb.length; callbackIndex < len; callbackIndex++) {
-                    addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb[callbackIndex] });
+            if (Array.isArray(eventName) && Array.isArray(cb)) {
+                for (var eventNameIndex = 0, len = eventName.length; eventNameIndex < len; eventNameIndex++) {
+                    for (var callbackIndex = 0, _len = cb.length; callbackIndex < _len; callbackIndex++) {
+                        addListener({ events: events, eventName: eventName[eventNameIndex], subscriberId: ID, callback: cb[callbackIndex] });
+                    }
                 }
+
+                return;
+            }
+
+            if (Array.isArray(eventName)) {
+                for (var _eventNameIndex = 0, _len2 = eventName.length; _eventNameIndex < _len2; _eventNameIndex++) {
+                    addListener({ events: events, eventName: eventName[_eventNameIndex], subscriberId: ID, callback: cb });
+                }
+
+                return;
+            }
+
+            if (Array.isArray(cb)) {
+                for (var _callbackIndex = 0, _len3 = cb.length; _callbackIndex < _len3; _callbackIndex++) {
+                    addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb[_callbackIndex] });
+                }
+
+                return;
             } else {
                 addListener({ events: events, eventName: eventName, subscriberId: ID, callback: cb });
+
+                return;
             }
         };
 
@@ -114,7 +137,7 @@ exports.default = {
                 }
 
                 if (event && cb && Array.isArray(cb) && event in events && events[event].length) {
-                    for (var callbackIndex = 0, _len = cb.length; callbackIndex < _len; callbackIndex++) {
+                    for (var callbackIndex = 0, _len4 = cb.length; callbackIndex < _len4; callbackIndex++) {
                         removeCallbacks({ events: events, event: event, subscriberId: ID, callback: cb[callbackIndex] });
                     }
 
