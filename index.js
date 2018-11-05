@@ -88,7 +88,7 @@ function removeGlobalEvent(_ref5) {
 }
 
 exports.default = {
-    install: function install(Vue, options) {
+    install: function install(Vue, options = {}) {
         var idSubsProp = isCorrectCustomName('idSubs', options) || '$idSubs';
         var listenToProp = isCorrectCustomName('listenTo', options) || '$listenTo';
         var emitEventProp = isCorrectCustomName('emitEvent', options) || '$emitEvent';
